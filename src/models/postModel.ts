@@ -11,6 +11,11 @@ interface Like {
     createdAt: Date;
 }
 
+interface Report {
+    userId: string;
+    reason: string
+}
+
 
 export interface Post extends Document {
     userId?: string;
@@ -18,6 +23,8 @@ export interface Post extends Document {
     description?: string;
     comments?: Comment[];
     likes?: Like[];
+    reported?: Report[];
+    isDeleted: boolean;
     createdAt: Date;
 }
 
@@ -58,6 +65,21 @@ const PostSchema: Schema<Post> = new Schema({
             }
         }
     ],
+    reported: [
+        {
+            userId: {
+                type: Schema.Types.ObjectId,
+                ref: "User", required: true
+            },
+            reason: {
+                type: String, required: true
+            },
+        }
+    ],
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
     createdAt: { type: Date, default: Date.now }
 });
 

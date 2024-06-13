@@ -6,7 +6,13 @@ service PostServices {
    rpc PostLike(LikePost) returns (PostResponse){};
    rpc PostDisLike(LikePost) returns (PostResponse){};
    rpc PostComment(CommentPost) returns (PostResponse){};
-}
+   rpc DeleteComment(deleteComment) returns (PostResponse){};
+   rpc ReportPost(reportPost) returns (PostResponse){};
+   rpc GetReportedPost(Empty) returns (GetPostResponse){};
+   rpc GetUserPost(UserId) returns (GetPostResponse){};
+   rpc DeletePost(deleteComment) returns (PostResponse){};
+   rpc EditPost(updatePostRequest) returns (PostResponse){};
+   }
 
 message Empty {
 
@@ -26,6 +32,11 @@ message PostRequest {
   FileDetails image = 3;
 }
 
+message updatePostRequest {
+  string postId = 1;
+  string description = 2;
+}
+
 message PostResponse {
     bool success = 1;
 }
@@ -34,11 +45,17 @@ message Comment {
     string userId = 1;
     string content = 2;
     string createdAt = 3;
+    string _id = 4;
 }
 
 message Like {
     string userId = 1;
     string createdAt = 2;
+}
+
+message report {
+  string userId = 1;
+  string reason = 2;
 }
 
 message PostDetails {
@@ -49,6 +66,7 @@ message PostDetails {
   repeated Comment comments = 5;
   repeated Like likes = 6;
   string createdAt = 7;
+  repeated report reported = 8;
 }
 
 message GetPostResponse {
@@ -70,3 +88,19 @@ message CommentPost {
   string postId = 2;
   string comment = 3;
 }
+
+message deleteComment {
+  string postId = 1;
+  string commentId = 2;
+}
+
+message reportPost {
+  string postId = 1;
+  string userId = 2;
+  string reason = 3;
+}
+
+message UserId {
+  string userId = 1;
+}
+

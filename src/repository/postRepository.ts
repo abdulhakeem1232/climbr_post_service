@@ -42,4 +42,75 @@ export const PostRepository = {
             return null;
         }
     },
+    deleteComment: async (postId: string, commentId: string) => {
+        try {
+            const response = await PostModel.updateOne({ _id: postId }, {
+                $pull: { comments: { _id: commentId } }
+            })
+            if (!response) {
+                return { success: false }
+            }
+            return { success: true }
+        } catch (err) {
+            console.error(`Error deleting comment post: ${err}`);
+            return null;
+        }
+    },
+    report: async (postId: string, reason: string, userId: string) => {
+        try {
+            const response = await PostModel.updateOne({ _id: postId }, {
+                $addToSet: { reported: { userId: userId, reason: reason } }
+            })
+            if (!response) {
+                return { success: false }
+            }
+            return { success: true }
+        } catch (err) {
+            console.error(`Error deleting comment post: ${err}`);
+            return null;
+        }
+    },
+    getreportedpost: async () => {
+        try {
+            const reportedPosts = await PostModel.aggregate([
+                {
+                    $match: {
+                        reported: { $exists: true, $ne: [] }
+                    }
+                }
+            ]);
+            return reportedPosts;
+
+        } catch (err) {
+            console.error(`Error fetching reported post: ${err}`);
+            return null;
+        }
+    },
+    getuserpost: async (userId: string) => {
+        try {
+            const posts = await PostModel.find({ userId: userId, isDeleted: { $ne: true } })
+            return posts || [];
+        } catch (err) {
+            console.error(`Error fetching user post: ${err}`);
+            return null;
+        }
+    },
+    deletePost: async (postId: string) => {
+        try {
+            const posts = await PostModel.updateOne({ _id: postId }, { $set: { isDeleted: true } })
+            return { success: true }
+        } catch (err) {
+            console.error(`Error fetching user post: ${err}`);
+            return null;
+        }
+    },
+    editPost: async (postId: string, description: string) => {
+        try {
+            const posts = await PostModel.updateOne({ _id: postId }, { $set: { description: description } })
+            return { success: true }
+        } catch (err) {
+            console.error(`Error fetching user post: ${err}`);
+            return null;
+        }
+    },
 }

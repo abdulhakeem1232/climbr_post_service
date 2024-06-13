@@ -34,6 +34,12 @@ server.addService(postProto.PostServices.service, {
   PostLike: postController.likePost,
   PostDisLike: postController.DislikePost,
   PostComment: postController.CommentPost,
+  DeleteComment: postController.deleteComment,
+  ReportPost: postController.reportPost,
+  GetReportedPost: postController.getReportedPost,
+  GetUserPost: postController.getUserPost,
+  DeletePost: postController.deletePost,
+  EditPost: postController.editPost
 })
 
 grpcServer();
