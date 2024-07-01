@@ -36,7 +36,8 @@ export const PostRepository = {
     commentPost: async (userdId: string, postId: string, comment: string) => {
         try {
             const updatedResult = await PostModel.updateOne({ _id: postId }, { $push: { comments: { userId: userdId, content: comment } } })
-            return true
+            const updatedPost = await PostModel.findOne({ _id: postId })
+            return updatedPost
         } catch (err) {
             console.error(`Error liking while posting: ${err}`);
             return null;
@@ -75,7 +76,11 @@ export const PostRepository = {
             const reportedPosts = await PostModel.aggregate([
                 {
                     $match: {
-                        reported: { $exists: true, $ne: [] }
+                        reported: { $exists: true, $ne: [] },
+                        $or: [
+                            { isDeleted: { $exists: false } },
+                            { isDeleted: false }
+                        ]
                     }
                 }
             ]);
@@ -110,6 +115,58 @@ export const PostRepository = {
             return { success: true }
         } catch (err) {
             console.error(`Error fetching user post: ${err}`);
+            return null;
+        }
+    },
+    getChartDetails: async (currentYear: number, month: number) => {
+        try {
+            const userStats = await PostModel.aggregate([
+                {
+                    $match: {
+                        $expr: {
+                            $eq: [{ $year: "$createdAt" }, currentYear]
+                        },
+                        isDeleted: {
+                            $ne: true
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: {
+                            month: { $month: "$createdAt" },
+                        },
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: {
+                        "_id.month": 1
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        month: "$_id.month",
+                        count: 1
+                    }
+                }
+
+            ])
+            const result = Array.from({ length: month + 1 }, (_, i) => ({
+                month: i + 1,
+                count: 0
+            }));
+            userStats.forEach(stat => {
+                const index = result.findIndex(r => r.month == stat.month);
+                if (index !== -1) {
+                    result[index].count = stat.count;
+                }
+            });
+            let count = await PostModel.find({ isDeleted: { $ne: true } }).countDocuments();
+            return { result, count }
+        } catch (err) {
+            console.error(`Error fetching chart: ${err}`);
             return null;
         }
     },

@@ -28,5 +28,13 @@ export const postService = {
             console.error(`Error post comment deletig: ${err}`);
             return null;
         }
-    }
+    },
+    getChartDetails: async (year: number, month: number) => {
+        try {
+            let response = await PostRepository.getChartDetails(year, month)
+            return response
+        } catch (err) {
+            throw new Error(`Failed to sign up: ${err}`);
+        }
+    },
 }

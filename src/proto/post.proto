@@ -5,13 +5,14 @@ service PostServices {
    rpc GetAllPost(GetPostRequest) returns (GetPostResponse){};
    rpc PostLike(LikePost) returns (PostResponse){};
    rpc PostDisLike(LikePost) returns (PostResponse){};
-   rpc PostComment(CommentPost) returns (PostResponse){};
+   rpc PostComment(CommentPost) returns (PostDetails){};
    rpc DeleteComment(deleteComment) returns (PostResponse){};
    rpc ReportPost(reportPost) returns (PostResponse){};
    rpc GetReportedPost(Empty) returns (GetPostResponse){};
    rpc GetUserPost(UserId) returns (GetPostResponse){};
    rpc DeletePost(deleteComment) returns (PostResponse){};
    rpc EditPost(updatePostRequest) returns (PostResponse){};
+   rpc GetReports(Empty) returns (GetPostStatsResponse){};
    }
 
 message Empty {
@@ -104,3 +105,12 @@ message UserId {
   string userId = 1;
 }
 
+message MonthStats {
+    int32 month = 1;
+    int32 count = 2;
+}
+
+message GetPostStatsResponse {
+    repeated MonthStats result = 1;
+    string count = 2;
+}

@@ -39,7 +39,8 @@ server.addService(postProto.PostServices.service, {
   GetReportedPost: postController.getReportedPost,
   GetUserPost: postController.getUserPost,
   DeletePost: postController.deletePost,
-  EditPost: postController.editPost
+  EditPost: postController.editPost,
+  GetReports: postController.getChartDetails,
 })
 
 grpcServer();
