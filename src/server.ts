@@ -12,11 +12,12 @@ const packageDefinition = protoLoader.loadSync(path.join(__dirname, "proto/post.
 const postProto = grpc.loadPackageDefinition(packageDefinition) as any;
 
 const server = new grpc.Server();
+const Domain = process.env.NODE_ENV === 'dev' ? "0.0.0.0" : process.env.PRO_DOMAIN_POST
 
 
 const grpcServer = () => {
   server.bindAsync(
-    `0.0.0.0:${process.env.PORT}`,
+    `${Domain}:${process.env.POST_PORT}`,
     grpc.ServerCredentials.createInsecure(),
     (err, port) => {
       if (err) {

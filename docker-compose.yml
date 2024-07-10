@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  post-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${POST_PORT}:${POST_PORT}"
+    env_file:
+      - .env
+    networks:
+      - climbr_network
+
+networks:
+  climbr_network:
+    driver: bridge
